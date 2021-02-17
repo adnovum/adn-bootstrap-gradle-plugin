@@ -1,0 +1,83 @@
+/*
+ * Author : AdNovum Informatik AG
+ */
+
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath 'com.gradle.publish:plugin-publish-plugin:0.12.0'
+	}
+}
+
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'jacoco'
+apply plugin: 'com.gradle.plugin-publish'
+
+repositories {
+	mavenCentral()
+}
+
+wrapper {
+	gradleVersion = '6.0.1'
+	distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+def patchCounter = System.env['GITHUB_RUN_NUMBER'] == null ? "0" : System.env['GITHUB_RUN_NUMBER']
+
+allprojects {
+	version = '1.0.0.' + patchCounter
+	group = 'ch.adnovum.bootstrap.gradle.plugins'
+}
+
+tasks.withType(Test) {
+	testLogging {
+		info {
+			events "passed", "skipped", "failed"
+			exceptionFormat "full"
+		}
+	}
+	systemProperty 'java.io.tmpdir', temporaryDir
+}
+
+dependencies {
+	compile gradleApi()
+	compile localGroovy()
+	testCompile 'junit:junit:4.13'
+	testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+		exclude module: 'groovy-all'
+	}
+}
+
+pluginBundle {
+    website = 'https://github.com/adnovum/adn-bootstrap-gradle-plugin'
+    vcsUrl = 'https://github.com/adnovum/adn-bootstrap-gradle-plugin.git'
+    tags = ['bootstrap', 'environment', 'shell']
+}
+
+gradlePlugin {
+	plugins {
+		bootstrapPlugin {
+			id = 'ch.adnovum.bootstrap'
+			implementationClass = 'ch.adnovum.bootstrap.gradle.plugins.BootstrapPlugin'
+			displayName = 'AdNovum Bootstrap Gradle Plugin'
+			description = 'Bootstrap your build environment with a custom shell script.'
+		}
+	}
+}
+
+task createReleaseNotes {
+	doLast {
+		new File(projectDir, "build/release-notes.md").text = "AdNovum Bootstrap Gradle Plugin ${project.version}"
+	}
+}
+
