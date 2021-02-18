@@ -5,7 +5,7 @@ Bootstrap your build environment with a custom shell script to downloading build
 
 ## Add bootstrapping to your project
 
-1. Apply the plugin (see adn-bootstrap-gradle-plugin on Gradle Plugin Portal)
+1. [Apply the plugin](https://plugins.gradle.org/plugin/ch.adnovum.bootstrap)
 2. Configure the plugin
    ```
    bootstrap {
