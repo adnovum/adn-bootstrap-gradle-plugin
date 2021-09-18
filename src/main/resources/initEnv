@@ -10,7 +10,6 @@ not_sourced() {
 # set stricter mode if invoked directly
 not_sourced && set -eu
 if [ -z "${APP_HOME:-}" ]; then
-	not_sourced || (echo "APP_HOME must be defined when sourcing initEnv" >&2 && return 1)
 	# Attempt to set APP_HOME
 	# Resolve links: $0 may be a link
 	PRG="$0"
@@ -28,6 +27,7 @@ if [ -z "${APP_HOME:-}" ]; then
 	cd "$(dirname "$PRG")/" >/dev/null
 	APP_HOME="$(pwd -P)"
 	cd "$SAVED" >/dev/null
+	not_sourced || echo "# APP_HOME not defined explicitly, using ${APP_HOME} to search for the config folder" >&2
 fi
 [ -z "${ADNDEVTOOLS_CACHE:-}" ] && export ADNDEVTOOLS_CACHE="$$$DEFAULT_ADNDEVTOOLS_CACHE_DIR$$$"
 BOOTSTRAP_SCRIPT_URL="$$$BOOTSTRAP_SCRIPT_URL$$$"
