@@ -4,11 +4,6 @@
 # Do not modify it by hand, as it will be overwritten by the   #
 # next execution of the wrapper task.                          #
 ################################################################
-not_sourced() {
-	test "X$(basename -- "$0")" = "XinitEnv"
-}
-# set stricter mode if invoked directly
-not_sourced && set -eu
 if [ -z "${APP_HOME:-}" ]; then
 	# Attempt to set APP_HOME
 	# Resolve links: $0 may be a link
@@ -27,7 +22,7 @@ if [ -z "${APP_HOME:-}" ]; then
 	cd "$(dirname "$PRG")/" >/dev/null
 	APP_HOME="$(pwd -P)"
 	cd "$SAVED" >/dev/null
-	not_sourced || echo "# APP_HOME not defined explicitly, using ${APP_HOME} to search for the config folder" >&2
+	echo "# APP_HOME not defined explicitly, using ${APP_HOME} to search for the config folder" >&2
 fi
 [ -z "${ADNDEVTOOLS_CACHE:-}" ] && export ADNDEVTOOLS_CACHE="$$$DEFAULT_ADNDEVTOOLS_CACHE_DIR$$$"
 BOOTSTRAP_SCRIPT_URL="$$$BOOTSTRAP_SCRIPT_URL$$$"
@@ -51,15 +46,3 @@ fi
 set -a
 eval "$VARS"
 set +a
-if not_sourced; then
-	# when the script is invoked directly, update gradle properties with up-to-date credentials
-	GRADLE_USER_HOME="${GRADLE_USER_HOME:-$HOME/.gradle}"
-	GRADLE_PROPERTIES="$GRADLE_USER_HOME/gradle.properties"
-	mkdir -p "$GRADLE_USER_HOME"
-	touch "$GRADLE_PROPERTIES"
-	sed -i -e '/^repoUser=/d' "$GRADLE_PROPERTIES"
-	echo "repoUser=$BINREPO_USER" >> "$GRADLE_PROPERTIES"
-	sed -i -e '/^repoPass=/d' "$GRADLE_PROPERTIES"
-	echo "repoPass=$BINREPO_TOKEN" >> "$GRADLE_PROPERTIES"
-	chmod 600 "$GRADLE_PROPERTIES"
-fi
