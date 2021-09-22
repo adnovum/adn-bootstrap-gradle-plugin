@@ -75,6 +75,12 @@ gradlePlugin {
 	}
 }
 
+task createVersionFile {
+	doLast {
+		new File(projectDir, "build/version.md").text = "${project.version}"
+	}
+}
+
 task createReleaseNotes {
 	doLast {
 		new File(projectDir, "build/release-notes.md").text = "AdNovum Bootstrap Gradle Plugin ${project.version}"
