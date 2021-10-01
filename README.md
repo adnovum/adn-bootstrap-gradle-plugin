@@ -2,6 +2,12 @@
 
 Bootstrap your build environment with a custom shell script to downloading build tools and set environment variables.
 
+The generated `initEnv` script can also be executed to run commands in the bootstrapped environment:
+
+```
+./initEnv <cmd>
+```
+
 
 ## Add bootstrapping to your project
 
