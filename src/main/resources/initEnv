@@ -46,3 +46,11 @@ fi
 set -a
 eval "$VARS"
 set +a
+
+not_sourced() {
+	test "X$(basename -- "$0")" = "XinitEnv"
+}
+if not_sourced; then
+	# when the script is invoked directly with parameters execute them in the bootstrapped context
+	"$@"
+fi
